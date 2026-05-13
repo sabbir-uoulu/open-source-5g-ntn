@@ -1,0 +1,50 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*~
+
+# LibreOffice / OpenOffice lock files and personal docs
+.~lock.*#
+*.odt
+*.ods
+*.odp
+
+# Build artifacts
+*.log
+*.pid
+*.aux
+*.out
+*.toc
+
+# Pandoc/LaTeX intermediates
+docs/**/*.aux
+docs/**/*.log
+docs/**/*.out
+docs/**/*.toc
+docs/**/*.bbl
+docs/**/*.blg
+
+# Diagrams: keep sources, ignore caches
+diagrams/.cache/
+
+# External dependencies — tracked separately, see external/README.md
+external/docker_open5gs/
+external/openairinterface5g/
+
+# Secrets / local
+.env
+*.pem
+*.key
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Notes scratch
+notes/scratch/
