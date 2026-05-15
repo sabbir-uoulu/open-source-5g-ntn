@@ -29,31 +29,62 @@ first, refine into the document later.
 ## Phase 1 — Open5GS 5G Core (in progress)
 
 ### Step 0: project skeleton
-**Date:** TODO
+**Date:** 2026-05-15
 
-Created `~/NTN-deployment/` with subdirectories:
-- `docs/` — written deliverables; the Phase 3 architecture document
-  lives in `docs/architecture/`
-- `configs/` — *our* edited configs (not pristine upstream)
+Created `~/NTN-deployment/` with the following subdirectories, separating
+*our work* (configs, docs, scripts, diagrams) from *third-party dependencies*
+(external/):
+
+- `docs/` — written deliverables; the Phase 3 architecture document lives in
+  `docs/architecture/`
+- `configs/` — our edited configs (not pristine upstream copies)
 - `diagrams/` — sources (drawio, svg, mermaid) in `sources/`, rendered
   PDFs/PNGs in `exports/`
 - `references/` — BibTeX file (`references.bib`), copies of cited 3GPP TS
   for offline reading
 - `scripts/` — automation we write
-- `notes/` — daily/session notes
-- `external/` — third-party repos we depend on (Open5GS, OAI). Intentionally
-  separated from our own work — this directory is gitignored. Pinned
-  commits recorded in `external/VERSIONS.md`.
+- `notes/` — session notes and scratch
+- `external/` — third-party repos. Intentionally separated and gitignored.
+  Pinned commits recorded in `external/VERSIONS.md`. We do not redistribute
+  upstream code; reproducibility is provided via commit pinning.
+
+This separation is deliberate: any reader of the public repo can immediately
+distinguish original work from integrated dependencies.
 
 ### Step 1: licensing and identity
-**Date:** TODO
+**Date:** 2026-05-15
 
-- LICENSE: CC-BY-4.0 (docs) and LICENSE-CODE: MIT (code)
-- Git identity set globally: `Sabbir Ahmed <sabbiraw.ahmed@gmail.com>`
-- Repo initialised on `main` branch
+- Documentation licence: CC-BY-4.0 (LICENSE in repo root)
+- Code licence: MIT (LICENSE-CODE in repo root)
+- Git identity (global): `Sabbir Ahmed <sabbiraw.ahmed@gmail.com>`
+- Repo initialised on `main` branch (not `master` — modern default)
+- First commit: `60a78dc` — "Initial project skeleton"
 
 ### Step 2: clone and pin docker_open5gs
-TODO
+**Date:** 2026-05-15
+
+Cloned the third-party orchestration layer:
+
+```bash
+cd ~/NTN-deployment/external
+git clone https://github.com/herlesupreeth/docker_open5gs
+```
+
+Pinned commit: `7722ae2eba474f50e0255fde731d0785689e37a2` (2026-04-10).
+Size: 3.5 MB. Recorded in `external/VERSIONS.md`.
+
+**Why this repo and not the official `open5gs/open5gs` Docker setup?**
+Three reasons:
+
+1. `docker_open5gs` is the most widely cited deployment recipe in the
+   OAI+Open5GS literature — using it makes our work directly comparable
+   to published tutorials.
+2. Cleaner PLMN / TAC / slice customisation surface — one `.env` file
+   plus per-NF YAMLs, rather than a sprawling compose mesh.
+3. Bundled WebUI for subscriber provisioning out of the box.
+
+The trade-off: this is a community fork, not officially endorsed by Open5GS.
+We pin the exact commit (above) so any future divergence is recorded.
 
 ### Step 3: edit YAML for PLMN/TAC/slice
 TODO
