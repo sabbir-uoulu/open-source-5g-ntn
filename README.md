@@ -5,25 +5,31 @@ covering GEO and (in planned phases) LEO scenarios. Built on OpenAirInterface (O
 and Open5GS, with documented architecture, protocol behaviour, and deployment
 patterns for direct-to-device (D2D) services.
 
+## Scope and goals
+
+- **Build a working, end-to-end 5G NR NTN testbed using only open-source components** — Open5GS for the 5G Core, OpenAirInterface for gNB and UE — with a GEO satellite link emulated in RFsimulator. Single-host, fully reproducible, every dependency pinned by commit. A LEO scenario primer is added as a written extension; no working LEO build is in scope.
+
+- **Demonstrate 3GPP Release-17 NTN protocol behaviour with measurable evidence** — SIB19 ephemeris delivery, K_offset scheduling, ephemeris-based Timing Advance, extended RRC timers, NAS registration and PDU session establishment over an emulated 477 ms round-trip GEO link. Captured in call-flow documents and log evidence, not just claims.
+
+- **Cover commercially relevant direct-to-device (D2D) transport modes** — IP PDU sessions, Non-IP PDU sessions, and SMS over NAS (SMSoNAS), each demonstrated end-to-end. These are the transport options that determine how messaging-first D2D services carry payload.
+
+- **Produce a citable, publishable reference architecture document** — modelled on 3GPP TR style: system overview, reference architecture, network functions, interfaces and protocols, NAS/RRC procedures for NTN, deployment view (Docker Compose and Kubernetes), NTN-terrestrial roaming, a voice-over-NTN analysis, and a roadmap to LEO and AI-RAN. Deposited on Zenodo with a DOI; source on GitHub under CC-BY-4.0.
+
+- **Treat reproducibility and provenance as first-class concerns** — every third-party dependency is cloned into a gitignored `external/` directory and pinned by commit hash in `external/VERSIONS.md`; every configuration change is layered separately from upstream so the diff is always visible; every command, design choice, and rationale is recorded in `lab-notes.md`.
+
+### Explicit non-goals
+
+- Real radio transmission (RFsim only; no SDR despite a USRP B210 being available)
+- Production-grade reliability, performance, or scale testing
+- Certification or regulatory compliance work
+- Closed-source vendor stacks or commercial test equipment
+- LEO operation as a working build (analysed as a written extension only)
+
 ## Status
 
 **Phase 1 — In progress.** Open5GS 5G Core in containers.
 
 See [`PLAN.md`](./PLAN.md) for the full eight-phase roadmap.
-
-## Scope
-
-This work demonstrates:
-
-- End-to-end 5G NR NTN architecture, mapped to 3GPP Release 17 specifications
-- Working RFsim-based GEO scenario with OAI gNB and OAI UE
-- Containerised 5G Core (Open5GS) with full Service-Based Architecture (SBA)
-- NAS and RRC call flows for NTN-specific procedures (SIB19, ephemeris-based
-  Timing Advance, K_offset scheduling, extended RRC timers)
-- SMS over NAS (SMSoNAS), Non-IP PDU sessions, and IMS-adjacent considerations
-  for D2D messaging services
-- Cloud-native deployment patterns (Docker Compose and Kubernetes)
-- NTN-terrestrial roaming architecture analysis
 
 ## Author
 
