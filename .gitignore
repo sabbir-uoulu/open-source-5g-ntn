@@ -37,7 +37,10 @@ external/docker_open5gs/
 external/openairinterface5g/
 
 # Secrets / local
-.env
+# Ignore .env at repo root and anywhere under external/ (upstream copies),
+# but NOT our deliberately tracked configs/**/.env (public test vectors).
+/.env
+external/**/.env
 *.pem
 *.key
 
