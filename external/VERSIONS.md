@@ -12,6 +12,12 @@ To reproduce, clone each project at the specified commit.
 - Commit: `7722ae2eba474f50e0255fde731d0785689e37a2` (2026-04-10)
 - Licence: BSD
 - Used for: Open5GS 5G Core container orchestration in Phase 1.
+- Pre-built images pulled from ghcr.io (Phase 1, 2026-05-21):
+  - `docker_open5gs:master` digest `sha256:68247a557ae8e2a46beca39bceb06d63d0c3daebb9f6b95312be9384461154c1`
+  - `docker_grafana:master` digest `sha256:a202291d069eb8274ff3f27cf99946fad8c9b239ad4378057ba789a96730468e`
+  - `docker_metrics` built locally (no pre-built image); bundles Prometheus 3.5.0
+  - Open5GS version baked into the image: v2.7.6-131-g782a97e
+  - Base images: mongo:6.0, grafana/grafana:11.3.0
 
 ## openairinterface5g
 

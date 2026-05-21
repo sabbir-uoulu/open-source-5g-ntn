@@ -86,14 +86,102 @@ Three reasons:
 The trade-off: this is a community fork, not officially endorsed by Open5GS.
 We pin the exact commit (above) so any future divergence is recorded.
 
-### Step 3: edit YAML for PLMN/TAC/slice
-TODO
+### Step 3: project configuration (Pattern Y)
+**Date:** 2026-05-21
+
+Rather than editing the upstream `.env` in place, we keep the upstream clone
+pristine and layer our own config on top:
+
+- Our edited config: `configs/open5gs/.env` (tracked in git)
+- Upstream baseline: `external/docker_open5gs/.env.upstream-baseline` (gitignored)
+- Apply script: `scripts/apply-open5gs-config.sh` copies our config into the
+  deploy directory and saves a one-time baseline backup.
+
+Deviations from the stock docker_open5gs `.env`:
+
+| Variable | Stock | Ours | Reason |
+|---|---|---|---|
+| TAC | 1 | 7 | Must match OAI gNB tracking_area_code in Phase 2 |
+| DOCKER_HOST_IP | 192.168.1.223 | 192.168.0.106 | This host (wlo1) |
+| UE1_IMSI | ...567895 | 001010000000001 | OAI default; avoids editing OAI UE later |
+| UE1_KI | 8baf... | fec8...4b8f | OAI default test key |
+| UE1_OP | 1111... | UE1_OPC C424...7CC1 | OAI default OPc (note OP->OPc) |
+
+PLMN kept at MCC=001 MNC=01 (3GPP reserved test PLMN). UE IPv4 pool kept at
+192.168.100.0/24 (no host route collision). The UE1_* values are not consumed
+by the 5G SA deployment path (they feed UERANSIM, which we are not using);
+the authoritative subscriber is created in the Open5GS web interface (Step 5).
+
+We chose the `sa-deploy.yaml` recipe (5G SA only) from the several deployment
+files the repo provides. It brings up 15 containers: the core NFs (nrf, scp,
+ausf, udr, udm, amf, smf, upf, pcf, bsf, nssf), plus mongo (subscriber DB),
+webui (provisioning), and a metrics+grafana monitoring pair.
 
 ### Step 4: bring up the core
-TODO
+**Date:** 2026-05-21
+
+Pulled pre-built images from ghcr.io and tagged them to the short names the
+compose file expects:
+
+```bash
+docker pull ghcr.io/herlesupreeth/docker_open5gs:master
+docker tag  ghcr.io/herlesupreeth/docker_open5gs:master docker_open5gs
+docker pull ghcr.io/herlesupreeth/docker_grafana:master
+docker tag  ghcr.io/herlesupreeth/docker_grafana:master docker_grafana
+```
+
+The `docker_metrics` image is not published pre-built, so compose built it
+locally on first launch (downloads Prometheus 3.5.0). Open5GS version baked
+into the image: v2.7.6-131-g782a97e.
+
+Launch:
+
+```bash
+./scripts/apply-open5gs-config.sh
+cd external/docker_open5gs
+docker compose -f sa-deploy.yaml up -d
+```
+
+Result: all 15 containers Up. Key listeners confirmed:
+- AMF NGAP/SCTP on 172.22.0.10:38412 (radio-facing, for the gNB in Phase 2)
+- UPF GTP-U on 2152/udp (N3 user plane)
+- WebUI on host port 9999; Grafana on 3000; metrics on 9090
+
+The NRF logged "NF registered [Heartbeat:10s]" for each NF, confirming the
+Service-Based Architecture mesh formed correctly.
 
 ### Step 5: provision test subscriber
-TODO
+**Date:** 2026-05-21
+
+Created one subscriber via the Open5GS web interface (http://localhost:9999,
+default login admin/1423):
+
+- IMSI: 001010000000001
+- K: fec86ba6eb707ed08905757b1bb44b8f
+- USIM type: OPc (NOT OP) -> C42449363BBAD02B66D16BC975D77CC1
+- DNN/APN: internet, S-NSSAI SST 1, IPv4v6
+
+The OPc-vs-OP distinction is the most common silent failure: entering an OPc
+value while the USIM type is set to OP causes authentication to fail later
+with a misleading NAS reject. Verified correct below.
 
 ### Step 6: verify
-TODO
+**Date:** 2026-05-21
+
+Verified the subscriber in the authoritative source (MongoDB), not just the
+web UI front-end:
+
+```bash
+docker exec mongo mongosh open5gs --quiet --eval \
+  'db.subscribers.find({ imsi: "001010000000001" }, \
+   { imsi:1, "security.k":1, "security.opc":1, "security.op":1, \
+     "slice.sst":1, "slice.session.name":1, _id:0 }).pretty()'
+```
+
+Output confirmed: k correct, op=null, opc set (correct USIM type),
+sst=1, session name "internet". The op=null with opc populated is the proof
+that the USIM type is right.
+
+**Phase 1 deployment complete.** A working, verified 5G SA core with the
+radio-facing NGAP listener up and one provisioned subscriber, ready for the
+OAI gNB and UE in Phase 2.
