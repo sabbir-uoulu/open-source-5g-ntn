@@ -64,4 +64,8 @@ the Phase 3 architecture document is deposited on Zenodo (planned).
 
 ## Contact
 
-[Update with professional email and links when GitHub account is live.]
+Sabbir Ahmed
+
+- Email: sabbiraw.ahmed@gmail.com
+- GitHub: https://github.com/sabbir-uoulu
+
