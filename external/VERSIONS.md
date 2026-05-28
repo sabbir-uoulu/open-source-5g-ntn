@@ -22,15 +22,24 @@ To reproduce, clone each project at the specified commit.
 ## openairinterface5g
 
 - Source: https://gitlab.eurecom.fr/oai/openairinterface5g
-- Branch: develop
-- Commit: TBD (to be filled in Phase 2)
+- Tag: `2026.w16`
+- Commit: `38dc378224d230a50a787f3d8e7d460314fcf770` (2026-04-17)
 - Licence: GNU OAI Public License
 - Used for: gNB (nr-softmodem) and UE (nr-uesoftmodem) in Phase 2.
+- Build: `./build_oai -w SIMU --ninja --nrUE --gNB --build-lib nrscope -C`
+- Local patches applied (see `patches/oai-2026.w16/`):
+  - `01-rfsim-antenna-assertion.patch` — tolerate zero-antenna RFsim
+    header under NTN long delay (radio/rfsimulator/simulator.cpp)
+  - `02-rfsim-write-queue-size.patch` — raise WRITE_QUEUE_SZ 20->1000
+    for the GEO timing advance (radio/COMMON/common_lib.h)
+- Our configs (tracked, applied per Pattern-Y at deploy time):
+  - `configs/oai-gnb/gnb.sa.band254.u0.25prb.rfsim.ntn.conf`
+  - `configs/oai-ue/ue.conf`
 
 ## OAI NTN GEO patch
 
-- Source: https://github.com/ngkore/OAI_NTN_RFSim
-- Commit: TBD (to be filled in Phase 2)
+- Source: https://github.com/ngkore/OAI-5G-NR-NTN  (renamed from OAI_NTN_RFSim)
+- Patch: `patch_files/ntn-geo.patch`, tested upstream vs OAI tag 2026.w16
 - Licence: see upstream
 - Used for: Release-17 NTN behaviour (SIB19, K_offset, RRC timer extension)
   in Phase 2.

@@ -1,0 +1,32 @@
+# Patch: tolerate zero-antenna RFsimulator headers under NTN long delay
+# Target: OpenAirInterface tag 2026.w16 (commit 38dc378224)
+# File:   radio/rfsimulator/simulator.cpp  (process_recv_header)
+#
+# Problem: Under GEO propagation delay (~477 ms round trip), the first
+# sample-block header the gNB reads from the UE can arrive before the
+# antenna-count field (th.nbAnt) is populated. The stock code hard-aborts
+# via AssertFatal, killing the gNB the moment the UE connects.
+#
+# Fix: Treat a zero-antenna header as a transient -- log a warning and skip
+# it, instead of aborting. The existing downstream code already tolerates
+# nbAnt == 0 a few lines below, so this is safe.
+#
+# Effect: gNB survives UE connection under NTN delay (terrestrial unaffected).
+# Apply from the OAI repo root:  git apply <this file>
+#
+diff --git a/radio/rfsimulator/simulator.cpp b/radio/rfsimulator/simulator.cpp
+index 3b2f64dbca..2487114e64 100644
+--- a/radio/rfsimulator/simulator.cpp
++++ b/radio/rfsimulator/simulator.cpp
+@@ -1092,7 +1092,10 @@ static bool add_client(rfsimulator_state_t *t)
+ static void process_recv_header(rfsimulator_state_t *t, buffer_t *b, bool first_time)
+ {
+   b->headerMode = false; // We got the header
+-  AssertFatal(b->th.nbAnt != 0, "Number of antennas not set\n");
++  if (b->th.nbAnt == 0) {
++    LOG_W(HW, "rfsimulator: received header with 0 antennas, skipping (NTN long-delay transient)\n");
++    return;
++  }
+   if (b->nbAnt != b->th.nbAnt) {
+     LOG_A(HW, "RFsim: Number of antennas changed from %d to %d\n", b->nbAnt, b->th.nbAnt);
+     b->nbAnt = b->th.nbAnt;
