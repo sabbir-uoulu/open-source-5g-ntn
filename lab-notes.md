@@ -304,3 +304,93 @@ since fixed the GEO uplink-delivery path.
 **Phase 2 status:** NR-NTN stack validated end-to-end through SIB19 decode and
 RACH initiation against the live Open5GS core; full user-plane attach pending
 resolution of the RFsim uplink-delivery limitation above.
+
+---
+
+## Phase 2 BREAKTHROUGH: full GEO NTN end-to-end attach achieved
+
+**Date:** 2026-06-01
+
+After the initial Phase 2 work stalled at RACH (gNB never receiving the PRACH
+preamble), a deeper investigation resolved the issue completely. The GEO NTN
+link now completes the **full attach chain**: sync -> SIB19 -> 4-step RACH ->
+RRC Setup -> NAS registration -> PDU session establishment, against the live
+Open5GS core over the emulated 238.74 ms GEO link.
+
+### Root causes found (two distinct problems)
+
+**1. RFsimulator clock divergence under real-time starvation.**
+The earlier RACH failure (gNB clock racing to ~444M samples while UE crawled at
+~221M, ~2:1) was NOT primarily the NTN timing advance. It was the rfsimulator's
+lock-step sample exchange falling out of sync because the OAI threads were not
+getting real-time priority. Confirmed against OAI issue #829 ("rfsimulator
+hanging ... when run without CAP_SYS_NICE / low priority threads").
+
+Contributing host conditions (all fixed):
+- `ulimit -r` was 0 -> threads could not acquire RT priority even under sudo.
+- CPU governor was `powersave` -> unpredictable frequency throttling.
+
+Fix at runtime: launch both gNB and UE under `sudo chrt -f 80 env ...`
+(SCHED_FIFO, priority 80), and set the CPU governor to `performance`. Persistent
+limits added to /etc/security/limits.conf (rtprio 99, memlock unlimited).
+With RT scheduling, the lock-step holds and the gNB receives the preamble.
+
+**2. RAR response window not NTN-aware (patch #3).**
+Once the preamble was received, RACH still failed: the UE looped on
+"Received RAR preamble (X) doesn't match the intended RAPID (Y)". Root cause:
+the gNB's RAR response-window check (`msg2_in_response_window` in
+`gNB_scheduler_RA.c`) used the base `ra-ResponseWindow`, capped at sl80 (80 ms),
+while a GEO round trip is ~477 ms. The window expired before the UE could
+receive the RAR, so the UE timed out and retried with a new preamble; the RAR
+for the old preamble then arrived and was discarded as a RAPID mismatch.
+
+The Msg3/K2 path already added `get_NTN_Koffset(scc)`, but the RAR window did
+not. Patch `03-ntn-rar-window-koffset.patch` makes the RAR window NTN-aware by
+adding the cell-specific K_offset to the effective window. For terrestrial
+(koffset 0) behaviour is unchanged.
+
+### Configuration fixes
+- UE `ue.conf`: removed an incorrect `@include channelmod_rfsimu_LEO_satellite.conf`
+  (LEO time-varying channel model wrongly pulled into the GEO scenario), and
+  added an `rfsimulator` section with `prop_delay = 238.74` so the delay is read
+  from the conf. This also avoids an intermittent command-line parse error of
+  `--rfsimulator.[0].prop_delay` when launched through the `chrt ... env` wrapper.
+
+### Working run commands (canonical)
+Core up first. Then, both under RT scheduling:
+```bash
+# gNB
+cd cmake_targets
+sudo chrt -f 80 env RFSIMULATOR=server ./ran_build/build/nr-softmodem \
+  -O ../ci-scripts/conf_files/gnb.sa.band254.u0.25prb.rfsim.ntn.conf \
+  --rfsim --gNBs.[0].min_rxtxtime 6
+
+# UE (after gNB shows "Running as server ...")
+sudo chrt -f 80 env RFSIMULATOR=127.0.0.1 ./ran_build/build/nr-uesoftmodem \
+  -O ../targets/PROJECTS/GENERIC-NR-5GC/CONF/ue.conf \
+  --band 254 -C 2488400000 --CO -873500000 \
+  -r 25 --numerology 0 --ssb 60 --rfsim
+```
+(prop_delay now comes from the conf files, not the command line.)
+
+### Verified successful trace
+- UE: `Found RAR with the intended RAPID 8` (no more mismatch)
+- UE: `RA-Msg3 transmitted`
+- UE: `4-Step RA procedure succeeded. CBRA: Contention Resolution is successful.`
+- UE: `Received NR_RRCSetup` -> `RRCSetupComplete`
+- UE: `Received Registration Accept with result 3GPP`
+- gNB: `Received PDU Session Resource Setup Request` -> `Added PDU Session 1`
+  -> `Added DRB 1` -> `NGAP_PDUSESSION_SETUP_RESP`
+- gNB: `RRCReconfigurationComplete`
+
+### Known follow-up
+After the PDU session is established, the gNB issues an `RRC Release` and removes
+the UE context (likely an inactivity/timer release tuned for terrestrial RTT).
+For a sustained data path / ping over GEO, a release/inactivity timer may need
+GEO-appropriate tuning. The attach and PDU session themselves succeed first.
+
+**Phase 2 status: COMPLETE.** Full open-source 5G NR NTN GEO end-to-end attach
+with PDU session establishment, achieved with three rfsimulator/MAC patches
+(antenna assertion, write-queue size, NTN-aware RAR window) plus real-time
+thread scheduling. Patch #3 (RAR window) is a genuine NTN protocol fix and a
+candidate for upstream contribution.

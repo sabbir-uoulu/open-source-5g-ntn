@@ -32,6 +32,14 @@ To reproduce, clone each project at the specified commit.
     header under NTN long delay (radio/rfsimulator/simulator.cpp)
   - `02-rfsim-write-queue-size.patch` — raise WRITE_QUEUE_SZ 20->1000
     for the GEO timing advance (radio/COMMON/common_lib.h)
+  - `03-ntn-rar-window-koffset.patch` — make the Msg2/RAR
+    response window NTN-aware by adding cell-specific K_offset
+    (openair2/LAYER2/NR_MAC_gNB/gNB_scheduler_RA.c). Enables RACH
+    completion over the GEO round trip. Terrestrial unaffected.
+- Runtime requirement (GEO): both gNB and UE must run with real-time thread
+  scheduling (`sudo chrt -f 80 env ...`) and CPU governor `performance`, else the
+  rfsimulator lock-step diverges (cf. OAI issue #829). prop_delay is set in the
+  conf files, not the command line.
 - Our configs (tracked, applied per Pattern-Y at deploy time):
   - `configs/oai-gnb/gnb.sa.band254.u0.25prb.rfsim.ntn.conf`
   - `configs/oai-ue/ue.conf`
