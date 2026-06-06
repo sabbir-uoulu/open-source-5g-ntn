@@ -4,7 +4,7 @@ A reproducible, fully open-source testbed for **5G NR Non-Terrestrial Networks**
 
 Built on **OpenAirInterface (OAI)** and **Open5GS**, with a GEO satellite link emulated in OAI's RFsimulator. Every dependency is pinned by commit; every configuration change and design decision is recorded.
 
-![5G NR NTN testbed architecture](results/e2eNTNtestbedGEO.drawio.png)
+![5G NR NTN testbed architecture](results/e2eNTNtestbed_GEO.drawio.png)
 
 ---
 
