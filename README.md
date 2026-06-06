@@ -83,13 +83,13 @@ Configurations are tracked in [`configs/`](./configs/), kept separate from the u
 
 ## Roadmap
 
-Phases 1 and 2 are **complete**. Later phases are planned and will be added incrementally; see [`PLAN.md`](./PLAN.md) for full detail.
+Phases 1, 2, and 3 are **complete**. Later phases are planned and will be added incrementally; see [`PLAN.md`](./PLAN.md) for full detail.
 
 | Phase | Description | Status |
 |---|---|---|
 | 1 | 5G Core in containers (Open5GS) | Complete |
 | 2 | gNB + UE, GEO NTN end-to-end attach | Complete |
-| 3 | Reference architecture document (Zenodo/DOI) | Planned |
+| 3 | Reference architecture document (docs/architecture/Open-Source_5G_NR_NTN_Reference_Architecture.pdf) | Complete |
 | 4 | SMS over NAS (SMSoNAS) over NTN | Planned |
 | 5 | D2D transport comparison (IP / Non-IP / SMSoNAS) | Planned |
 | 6 | Voice-over-NTN delay-budget analysis | Planned |
