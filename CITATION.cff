@@ -8,6 +8,11 @@ authors:
     affiliation: "6G Flagship, University of Oulu, Finland"
     email: sabbiraw.ahmed@gmail.com
 repository-code: "https://github.com/sabbir-uoulu/open-source-5g-ntn"
+doi: 10.5281/zenodo.20588732
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.20588732
+    description: "Concept DOI (always resolves to the latest version)"
 abstract: >-
   A reproducible, fully open-source testbed for 5G NR Non-Terrestrial
   Networks demonstrating a complete end-to-end 3GPP Release-17

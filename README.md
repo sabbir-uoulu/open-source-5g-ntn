@@ -1,5 +1,7 @@
 # Open-Source 5G NR Non-Terrestrial Network (NTN) Testbed
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20588732.svg)](https://doi.org/10.5281/zenodo.20588732)
+
 A reproducible, fully open-source testbed for **5G NR Non-Terrestrial Networks**, demonstrating a complete **end-to-end GEO satellite attach** — from cell sync through to an established data session — using only open-source components and no SDR hardware.
 
 Built on **OpenAirInterface (OAI)** and **Open5GS**, with a GEO satellite link emulated in OAI's RFsimulator. Every dependency is pinned by commit; every configuration change and design decision is recorded.
@@ -130,4 +132,8 @@ Pinned versions and commits in [`external/VERSIONS.md`](./external/VERSIONS.md).
 
 ## Citation
 
-Citation metadata (CITATION.cff / Zenodo DOI) will be added with the Phase 3 architecture document.
+If you use this work, please cite it via its DOI:
+
+> Ahmed, S. (2026). *Open-Source 5G NR Non-Terrestrial Network (NTN) Testbed* (v1.0.0). Zenodo. https://doi.org/10.5281/zenodo.20588732
+
+A `CITATION.cff` is included in the repository; GitHub shows a "Cite this repository" button generated from it.
