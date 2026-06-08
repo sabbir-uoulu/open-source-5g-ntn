@@ -1,0 +1,34 @@
+cff-version: 1.2.0
+title: "Open-Source 5G NR Non-Terrestrial Network (NTN) Testbed"
+message: "If you use this software, please cite it using these metadata."
+type: software
+authors:
+  - given-names: Sabbir
+    family-names: Ahmed
+    affiliation: "6G Flagship, University of Oulu, Finland"
+    email: sabbiraw.ahmed@gmail.com
+repository-code: "https://github.com/sabbir-uoulu/open-source-5g-ntn"
+abstract: >-
+  A reproducible, fully open-source testbed for 5G NR Non-Terrestrial
+  Networks demonstrating a complete end-to-end 3GPP Release-17
+  geostationary (GEO) satellite attach using OpenAirInterface (OAI)
+  and Open5GS, with the satellite channel emulated in OAI's RF
+  simulator. The testbed completes cell synchronisation, SIB19
+  acquisition, four-step random access, RRC setup, NAS registration,
+  and PDU session establishment over an emulated 238.74 ms one-way
+  GEO link. Includes a protocol-level fix making the gNB random-access
+  response window NTN-aware, and a reference architecture document.
+keywords:
+  - 5G NR
+  - Non-Terrestrial Networks
+  - NTN
+  - satellite communications
+  - direct-to-device
+  - OpenAirInterface
+  - Open5GS
+  - GEO satellite
+  - 3GPP Release 17
+  - open-source testbed
+license: CC-BY-4.0
+version: 1.0.0
+date-released: 2026-06-07
