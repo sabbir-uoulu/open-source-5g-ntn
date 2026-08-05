@@ -36,17 +36,6 @@ A full **3GPP Release-17 GEO NTN attach**, verified end to end against a live 5G
 
 The complete 4-step contention-based RACH succeeds over the GEO round trip, the UE registers with the core, and a PDU session with a dedicated DRB is established.
 
----
-
-## Engineering highlights
-
-Getting RACH to complete over GEO-scale timing required solving two non-obvious problems, both documented in detail in [`lab-notes.md`](./lab-notes.md):
-
-1. **RFsimulator clock divergence under load.** The simulator's lock-step sample exchange diverges unless its threads get real-time scheduling. Fixed by running gNB and UE under `chrt -f 80` (SCHED_FIFO) with the CPU governor set to `performance` (cf. OAI issue #829).
-
-2. **RAR response window not NTN-aware** *(protocol-level fix)*. The gNB's Msg2/RAR response-window check was capped at 80 ms while a GEO round trip is ~477 ms, so the random-access handshake never closed. The Msg3 path already added the NTN K-offset, but the RAR window did not. The patch `03-ntn-rar-window-koffset.patch` makes the RAR window NTN-aware; terrestrial behaviour is unchanged. RACH completed on the next run.
-
-All local patches are in [`patches/`](./patches/), each with a documentation header explaining the problem, root cause, and fix. Three patches were applied to produce the working build.
 
 ---
 
@@ -70,8 +59,6 @@ sudo chrt -f 80 env RFSIMULATOR=127.0.0.1 ./ran_build/build/nr-uesoftmodem \
   --band 254 -C 2488400000 --CO -873500000 \
   -r 25 --numerology 0 --ssb 60 --rfsim
 ```
-
-Configurations are tracked in [`configs/`](./configs/), kept separate from the upstream OAI clone so every change is visible.
 
 ---
 
