@@ -60,6 +60,10 @@ sudo chrt -f 80 env RFSIMULATOR=127.0.0.1 ./ran_build/build/nr-uesoftmodem \
   -r 25 --numerology 0 --ssb 60 --rfsim
 ```
 
+Configurations are tracked in [`configs/`](./configs/), kept separate from the upstream OAI clone so every change is visible.
+
+📄 A complete step-by-step deployment guide, covering core, gNB and UE with every command and a validation checklist, is available in [`docs/`](./docs/Open-Source_5G_NR_NTN_Deployment_Guide_v1.pdf).
+
 ---
 
 ## Known limitations
