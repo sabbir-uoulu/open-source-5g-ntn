@@ -1,0 +1,4 @@
+*.conf linguist-language=INI
+docs/** linguist-documentation
+results/** linguist-documentation
+patches/** linguist-documentation
