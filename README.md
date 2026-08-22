@@ -2,7 +2,7 @@
 
 [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.20588732.svg)](https://doi.org/10.5281/zenodo.20588732)
 
-A reproducible, fully open-source testbed for **5G NR Non-Terrestrial Networks**, demonstrating a complete **end-to-end GEO satellite attach** — from cell sync through to an established data session — using only open-source components and no SDR hardware.
+A reproducible, fully open-source testbed for **5G NR Non-Terrestrial Networks**, demonstrating a complete **end-to-end GEO satellite attach** (from cell sync through to an established data session), using only open-source components and no SDR hardware.
 
 Built on **OpenAirInterface (OAI)** and **Open5GS**, with a GEO satellite link emulated in OAI's RFsimulator. Every dependency is pinned by commit; every configuration change and design decision is recorded.
 
@@ -41,7 +41,7 @@ The complete 4-step contention-based RACH succeeds over the GEO round trip, the 
 
 ## Reproduce it
 
-> Tested on Ubuntu 22.04. Requires the pinned OAI and Open5GS versions — see [`external/VERSIONS.md`](./external/VERSIONS.md).
+> Tested on Ubuntu 22.04. Requires the pinned OAI and Open5GS versions. See [`external/VERSIONS.md`](./external/VERSIONS.md).
 
 1. **Bring up the 5G core** (Open5GS via Docker Compose). See [`lab-notes.md`](./lab-notes.md) Phase 1.
 2. **Build OAI** at the pinned commit (tag `2026.w16`) and apply the three patches in [`patches/oai-2026.w16/`](./patches/oai-2026.w16/).
@@ -68,8 +68,8 @@ Configurations are tracked in [`configs/`](./configs/), kept separate from the u
 
 ## Known limitations
 
-- **RFsimulator only** — no real radio / SDR.
-- **Wall-clock latency does not reflect GEO delay.** The GEO propagation delay is modelled correctly in the *sample/timing domain* — which is precisely why it drives the NTN protocol behaviour (SIB19 timing, K-offset, the RAR-window fix above). However, OAI's RFsimulator is **not real-time**: it processes samples as fast as the CPU allows, so a `ping` over the link returns in tens of milliseconds rather than the ~477 ms a physical GEO round trip would take. The delay is real where it matters for protocol correctness; it is not a wall-clock latency emulator. This is a known property of the RFsimulator, not a configuration issue.
+- **RFsimulator only**. No real radio / SDR.
+- **Wall-clock latency does not reflect GEO delay.** The GEO propagation delay is modelled correctly in the *sample/timing domain*, which is precisely why it drives the NTN protocol behaviour (SIB19 timing, K-offset, the RAR-window fix above). However, OAI's RFsimulator is **not real-time**: it processes samples as fast as the CPU allows, so a `ping` over the link returns in tens of milliseconds rather than the ~477 ms a physical GEO round trip would take. The delay is real where it matters for protocol correctness; it is not a wall-clock latency emulator. This is a known property of the RFsimulator, not a configuration issue.
 - **Single host, no scale/performance testing**, no certification or regulatory work.
 
 ---
@@ -96,7 +96,7 @@ A **LEO testbed** is planned as a separate repository.
 
 ## Author
 
-**Sabbir Ahmed** — Doctoral Researcher, 6G Flagship, University of Oulu, Finland.
+**Sabbir Ahmed**, Doctoral Researcher, 6G Flagship, University of Oulu, Finland.
 
 Previously at the 5G Test Network (5GTN) Oulu, where I led 6G-XR deliverable D1.1 ("Requirements and Use Case Specifications", Horizon Europe SNS-JU, 2023) and worked on 5G/B5G testbed deployment with open-source stacks (OpenAirInterface, srsRAN, Open5GS, free5GC, UERANSIM) and commercial Nokia RAN.
 
@@ -107,17 +107,17 @@ Previously at the 5G Test Network (5GTN) Oulu, where I led 6G-XR deliverable D1.
 
 ## Licensing
 
-- Documentation, diagrams, configurations: **CC-BY-4.0** — see [`LICENSE`](./LICENSE)
-- Code, scripts, automation: **MIT** — see [`LICENSE-CODE`](./LICENSE-CODE)
+- Documentation, diagrams, configurations: **CC-BY-4.0**. See [`LICENSE`](./LICENSE)
+- Code, scripts, automation: **MIT**. See [`LICENSE-CODE`](./LICENSE-CODE)
 
 ## Attribution
 
 This work integrates and depends upon:
 
-- OpenAirInterface 5G (OAI) — https://gitlab.eurecom.fr/oai/openairinterface5g — GNU OAI Public License — EURECOM
-- Open5GS — https://open5gs.org/ — AGPL-3.0 — Sukchan Lee and contributors
-- docker_open5gs — https://github.com/herlesupreeth/docker_open5gs — BSD — Supreeth Herle
-- OAI NTN GEO config — https://github.com/ngkore/OAI-5G-NR-NTN — community contributions, ngkore
+- OpenAirInterface 5G (OAI) (https://gitlab.eurecom.fr/oai/openairinterface5g), GNU OAI Public License (EURECOM
+- Open5GS), https://open5gs.org/ (AGPL-3.0), Sukchan Lee and contributors
+- docker_open5gs (https://github.com/herlesupreeth/docker_open5gs), BSD (Supreeth Herle
+- OAI NTN GEO config), https://github.com/ngkore/OAI-5G-NR-NTN, community contributions, ngkore
 
 Pinned versions and commits in [`external/VERSIONS.md`](./external/VERSIONS.md).
 

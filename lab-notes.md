@@ -1,4 +1,4 @@
-# Lab Notes — NTN Deployment
+# Lab Notes (NTN Deployment)
 
 Working log for the open-source 5G NR NTN testbed. Every command, every
 design choice, every error and its resolution.
@@ -18,7 +18,7 @@ first, refine into the document later.
 - Prior state: br-oai (192.168.70.0/24) and virbr0 (192.168.122.0/24) exist
   from prior libvirt and OAI work. Both DOWN at project start. Harmless.
 
-## Pre-flight verification — date filled in below
+## Pre-flight verification (date filled in below)
 - SCTP module: loaded (`modprobe sctp`)
 - IPv4 forwarding: enabled (`net.ipv4.ip_forward = 1`)
 - Target ports clear: 38412 (NGAP/SCTP), 2152 (GTP-U/UDP),
@@ -26,7 +26,7 @@ first, refine into the document later.
 - No existing OAI / Open5GS / free5GC / srsRAN images or containers
 - UE IP pool 10.45.0.0/16 has no host route collision
 
-## Phase 1 — Open5GS 5G Core (in progress)
+## Phase 1 (Open5GS 5G Core (in progress))
 
 ### Step 0: project skeleton
 **Date:** 2026-05-15
@@ -35,16 +35,16 @@ Created `~/NTN-deployment/` with the following subdirectories, separating
 *our work* (configs, docs, scripts, diagrams) from *third-party dependencies*
 (external/):
 
-- `docs/` — written deliverables; the Phase 3 architecture document lives in
+- `docs/`, written deliverables; the Phase 3 architecture document lives in
   `docs/architecture/`
-- `configs/` — our edited configs (not pristine upstream copies)
-- `diagrams/` — sources (drawio, svg, mermaid) in `sources/`, rendered
+- `configs/`, our edited configs (not pristine upstream copies)
+- `diagrams/`, sources (drawio, svg, mermaid) in `sources/`, rendered
   PDFs/PNGs in `exports/`
-- `references/` — BibTeX file (`references.bib`), copies of cited 3GPP TS
+- `references/`, BibTeX file (`references.bib`), copies of cited 3GPP TS
   for offline reading
-- `scripts/` — automation we write
-- `notes/` — session notes and scratch
-- `external/` — third-party repos. Intentionally separated and gitignored.
+- `scripts/` (automation we write
+- `notes/`), session notes and scratch
+- `external/`, third-party repos. Intentionally separated and gitignored.
   Pinned commits recorded in `external/VERSIONS.md`. We do not redistribute
   upstream code; reproducibility is provided via commit pinning.
 
@@ -57,8 +57,8 @@ distinguish original work from integrated dependencies.
 - Documentation licence: CC-BY-4.0 (LICENSE in repo root)
 - Code licence: MIT (LICENSE-CODE in repo root)
 - Git identity (global): `Sabbir Ahmed <sabbiraw.ahmed@gmail.com>`
-- Repo initialised on `main` branch (not `master` — modern default)
-- First commit: `60a78dc` — "Initial project skeleton"
+- Repo initialised on `main` branch (not `master` (modern default)
+- First commit: `60a78dc`), "Initial project skeleton"
 
 ### Step 2: clone and pin docker_open5gs
 **Date:** 2026-05-15
@@ -77,9 +77,9 @@ Size: 3.5 MB. Recorded in `external/VERSIONS.md`.
 Three reasons:
 
 1. `docker_open5gs` is the most widely cited deployment recipe in the
-   OAI+Open5GS literature — using it makes our work directly comparable
+   OAI+Open5GS literature, using it makes our work directly comparable
    to published tutorials.
-2. Cleaner PLMN / TAC / slice customisation surface — one `.env` file
+2. Cleaner PLMN / TAC / slice customisation surface, one `.env` file
    plus per-NF YAMLs, rather than a sprawling compose mesh.
 3. Bundled WebUI for subscriber provisioning out of the box.
 
@@ -103,9 +103,9 @@ Deviations from the stock docker_open5gs `.env`:
 |---|---|---|---|
 | TAC | 1 | 7 | Must match OAI gNB tracking_area_code in Phase 2 |
 | DOCKER_HOST_IP | 192.168.1.223 | 192.168.0.106 | This host (wlo1) |
-| UE1_IMSI | ...567895 | 001010000000001 | OAI default; avoids editing OAI UE later |
-| UE1_KI | 8baf... | fec8...4b8f | OAI default test key |
-| UE1_OP | 1111... | UE1_OPC C424...7CC1 | OAI default OPc (note OP->OPc) |
+| UE1_IMSI | ..567895 | 001010000000001 | OAI default; avoids editing OAI UE later |
+| UE1_KI | 8baf.. | fec8..4b8f | OAI default test key |
+| UE1_OP | 1111.. | UE1_OPC C424..7CC1 | OAI default OPc (note OP->OPc) |
 
 PLMN kept at MCC=001 MNC=01 (3GPP reserved test PLMN). UE IPv4 pool kept at
 192.168.100.0/24 (no host route collision). The UE1_* values are not consumed
@@ -190,8 +190,8 @@ OAI gNB and UE in Phase 2.
 
 ## Phase 2: OAI gNB + UE over GEO NTN (RFsimulator)
 
-**Goal:** Stand up an end-to-end 5G NR NTN radio link — OAI gNB and UE with the
-GEO satellite scenario emulated in RFsimulator — and attach it to the Phase 1
+**Goal:** Stand up an end-to-end 5G NR NTN radio link, OAI gNB and UE with the
+GEO satellite scenario emulated in RFsimulator, and attach it to the Phase 1
 Open5GS core. Validate Release-17 NTN behaviour: SIB19 broadcast/decode,
 K_offset and ephemeris-based timing advance, and the random-access call flow
 over the ~477 ms GEO round-trip delay.
@@ -199,7 +199,7 @@ over the ~477 ms GEO round-trip delay.
 ### Step 0: OAI version + NTN config patch
 **Date:** 2026-05-21
 
-OAI checked out at tag `2026.w16` (commit `38dc378224`, 2026-04-17) — this is
+OAI checked out at tag `2026.w16` (commit `38dc378224`, 2026-04-17), this is
 the version the ngkore NTN GEO patch is tested against. The patch
 (`patch_files/ntn-geo.patch` from https://github.com/ngkore/OAI-5G-NR-NTN,
 renamed from OAI_NTN_RFSim) applied cleanly with `git apply`. It provides the
@@ -257,13 +257,13 @@ Core up first (Phase 1), then gNB (RFsim server), then UE (client).
 # gNB (terminal 2)
 cd cmake_targets
 sudo RFSIMULATOR=server ./ran_build/build/nr-softmodem \
-  -O ../ci-scripts/conf_files/gnb.sa.band254.u0.25prb.rfsim.ntn.conf \
+  -O ./ci-scripts/conf_files/gnb.sa.band254.u0.25prb.rfsim.ntn.conf \
   --rfsim --rfsimulator.[0].prop_delay 238.74 \
   --gNBs.[0].min_rxtxtime 6 2>&1 | tee /tmp/gnb.log
 
-# UE (terminal 3, after gNB shows "Running as server ...")
+# UE (terminal 3, after gNB shows "Running as server ..")
 sudo RFSIMULATOR=127.0.0.1 ./ran_build/build/nr-uesoftmodem \
-  -O ../targets/PROJECTS/GENERIC-NR-5GC/CONF/ue.conf \
+  -O ./targets/PROJECTS/GENERIC-NR-5GC/CONF/ue.conf \
   --band 254 -C 2488400000 --CO -873500000 \
   -r 25 --numerology 0 --ssb 60 \
   --rfsim --rfsimulator.[0].prop_delay 238.74 2>&1 | tee /tmp/ue.log
@@ -291,7 +291,7 @@ logs receiving it (no `RA-RNTI` / `Activating RA process` / RAR on the gNB
 side), so the UE loops on `RAR reception failed`. Isolated by bottom-up log
 analysis: N2 link confirmed up, downlink + SIB19 confirmed decoded, so the
 failure is uplink delivery. Root-caused to the RFsimulator's uplink sample
-delivery under the ~3.6M-sample timing-advance offset at tag 2026.w16 — a
+delivery under the ~3.6M-sample timing-advance offset at tag 2026.w16, a
 limitation of the simulator's sample-timeline/replay model, not a config or
 protocol issue, and not a one-line fix.
 
@@ -324,13 +324,13 @@ The earlier RACH failure (gNB clock racing to ~444M samples while UE crawled at
 ~221M, ~2:1) was NOT primarily the NTN timing advance. It was the rfsimulator's
 lock-step sample exchange falling out of sync because the OAI threads were not
 getting real-time priority. Confirmed against OAI issue #829 ("rfsimulator
-hanging ... when run without CAP_SYS_NICE / low priority threads").
+hanging .. when run without CAP_SYS_NICE / low priority threads").
 
 Contributing host conditions (all fixed):
 - `ulimit -r` was 0 -> threads could not acquire RT priority even under sudo.
 - CPU governor was `powersave` -> unpredictable frequency throttling.
 
-Fix at runtime: launch both gNB and UE under `sudo chrt -f 80 env ...`
+Fix at runtime: launch both gNB and UE under `sudo chrt -f 80 env ..`
 (SCHED_FIFO, priority 80), and set the CPU governor to `performance`. Persistent
 limits added to /etc/security/limits.conf (rtprio 99, memlock unlimited).
 With RT scheduling, the lock-step holds and the gNB receives the preamble.
@@ -354,7 +354,7 @@ adding the cell-specific K_offset to the effective window. For terrestrial
   (LEO time-varying channel model wrongly pulled into the GEO scenario), and
   added an `rfsimulator` section with `prop_delay = 238.74` so the delay is read
   from the conf. This also avoids an intermittent command-line parse error of
-  `--rfsimulator.[0].prop_delay` when launched through the `chrt ... env` wrapper.
+  `--rfsimulator.[0].prop_delay` when launched through the `chrt .. env` wrapper.
 
 ### Working run commands (canonical)
 Core up first. Then, both under RT scheduling:
@@ -362,12 +362,12 @@ Core up first. Then, both under RT scheduling:
 # gNB
 cd cmake_targets
 sudo chrt -f 80 env RFSIMULATOR=server ./ran_build/build/nr-softmodem \
-  -O ../ci-scripts/conf_files/gnb.sa.band254.u0.25prb.rfsim.ntn.conf \
+  -O ./ci-scripts/conf_files/gnb.sa.band254.u0.25prb.rfsim.ntn.conf \
   --rfsim --gNBs.[0].min_rxtxtime 6
 
-# UE (after gNB shows "Running as server ...")
+# UE (after gNB shows "Running as server ..")
 sudo chrt -f 80 env RFSIMULATOR=127.0.0.1 ./ran_build/build/nr-uesoftmodem \
-  -O ../targets/PROJECTS/GENERIC-NR-5GC/CONF/ue.conf \
+  -O ./targets/PROJECTS/GENERIC-NR-5GC/CONF/ue.conf \
   --band 254 -C 2488400000 --CO -873500000 \
   -r 25 --numerology 0 --ssb 60 --rfsim
 ```

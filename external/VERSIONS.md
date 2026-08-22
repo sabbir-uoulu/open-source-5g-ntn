@@ -1,7 +1,7 @@
-# External Dependencies — Pinned Versions
+# External Dependencies (Pinned Versions)
 
 This project integrates several third-party open-source projects. Each is
-cloned into `external/` (gitignored — not redistributed here). The exact
+cloned into `external/` (gitignored, not redistributed here). The exact
 versions used are recorded below for reproducibility.
 
 To reproduce, clone each project at the specified commit.
@@ -28,16 +28,16 @@ To reproduce, clone each project at the specified commit.
 - Used for: gNB (nr-softmodem) and UE (nr-uesoftmodem) in Phase 2.
 - Build: `./build_oai -w SIMU --ninja --nrUE --gNB --build-lib nrscope -C`
 - Local patches applied (see `patches/oai-2026.w16/`):
-  - `01-rfsim-antenna-assertion.patch` — tolerate zero-antenna RFsim
+  - `01-rfsim-antenna-assertion.patch`, tolerate zero-antenna RFsim
     header under NTN long delay (radio/rfsimulator/simulator.cpp)
-  - `02-rfsim-write-queue-size.patch` — raise WRITE_QUEUE_SZ 20->1000
+  - `02-rfsim-write-queue-size.patch`, raise WRITE_QUEUE_SZ 20->1000
     for the GEO timing advance (radio/COMMON/common_lib.h)
-  - `03-ntn-rar-window-koffset.patch` — make the Msg2/RAR
+  - `03-ntn-rar-window-koffset.patch`, make the Msg2/RAR
     response window NTN-aware by adding cell-specific K_offset
     (openair2/LAYER2/NR_MAC_gNB/gNB_scheduler_RA.c). Enables RACH
     completion over the GEO round trip. Terrestrial unaffected.
 - Runtime requirement (GEO): both gNB and UE must run with real-time thread
-  scheduling (`sudo chrt -f 80 env ...`) and CPU governor `performance`, else the
+  scheduling (`sudo chrt -f 80 env ..`) and CPU governor `performance`, else the
   rfsimulator lock-step diverges (cf. OAI issue #829). prop_delay is set in the
   conf files, not the command line.
 - Our configs (tracked, applied per Pattern-Y at deploy time):
