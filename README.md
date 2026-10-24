@@ -10,7 +10,7 @@ Built on **OpenAirInterface (OAI)** and **Open5GS**, with a GEO satellite link e
 
 ---
 
-## What works today
+## Validated capabilities
 
 A full **3GPP Release-17 GEO NTN attach**, verified end to end against a live 5G core over an emulated 238.74 ms one-way (~477 ms round-trip) satellite link:
 
